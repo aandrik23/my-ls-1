@@ -69,18 +69,17 @@ func statOK(e models.Entry) (*syscall.Stat_t, bool) {
 }
 
 func totalBlocks(entries []models.Entry) int64 {
-	var total int64
-
+	var total512 int64
 	for _, e := range entries {
 		st, ok := statOK(e)
 		if !ok {
 			continue
 		}
-
-		total += st.Blocks
+		total512 += st.Blocks // 512-byte blocks on Linux
 	}
 
-	return total
+	// Convert 512B blocks to 1K blocks (round up)
+	return (total512 + 1) / 2
 }
 
 func formatName(e models.Entry) string {

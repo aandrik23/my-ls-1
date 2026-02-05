@@ -22,8 +22,8 @@ func Run(paths []string, flags models.Flags) {
 		logger.PrintError(logger.ACCESS, e.Path, e.Err)
 	}
 
-	sortEntries(files)
-	sortEntries(dirs)
+	sortEntries(files, flags)
+	sortEntries(dirs, flags)
 
 	// Print files first
 	for _, e := range files {
@@ -45,4 +45,5 @@ func Run(paths []string, flags models.Flags) {
 			logger.PrintError(logger.ACCESS, d.Name, err)
 		}
 	}
+	defer commands.Flush()
 }

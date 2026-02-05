@@ -19,6 +19,8 @@ func Help() {
 		clihelp.F("-R", "", "list subdirectories recursively"),
 		clihelp.F("-d", "", "list directories themselves, not their contents"),
 		clihelp.F("-1", "", "list one file per line"),
+		clihelp.F("-r", "", "reverse order while sorting"),
+		clihelp.F("-t", "", "sort by modification time, newest first"),
 		clihelp.F("--help", "", "display this help and exit"),
 	)
 }

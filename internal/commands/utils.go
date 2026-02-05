@@ -22,18 +22,34 @@ func digits(n int) int {
 }
 
 func username(uid uint32) string {
-	u, err := user.LookupId(strconv.FormatUint(uint64(uid), 10))
-	if err != nil {
-		return strconv.FormatUint(uint64(uid), 10)
+	if name, ok := userCache[uid]; ok {
+		return name
 	}
+
+	u, err := user.LookupId(strconv.Itoa(int(uid)))
+	if err != nil {
+		name := strconv.Itoa(int(uid))
+		userCache[uid] = name
+		return name
+	}
+
+	userCache[uid] = u.Username
 	return u.Username
 }
 
 func groupname(gid uint32) string {
-	g, err := user.LookupGroupId(strconv.FormatUint(uint64(gid), 10))
-	if err != nil {
-		return strconv.FormatUint(uint64(gid), 10)
+	if name, ok := groupCache[gid]; ok {
+		return name
 	}
+
+	g, err := user.LookupGroupId(strconv.Itoa(int(gid)))
+	if err != nil {
+		name := strconv.Itoa(int(gid))
+		groupCache[gid] = name
+		return name
+	}
+
+	groupCache[gid] = g.Name
 	return g.Name
 }
 

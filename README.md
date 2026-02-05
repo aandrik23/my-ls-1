@@ -8,29 +8,40 @@ This project recreates core ls functionality step by step, closely matching real
 
 - List files and directories
 
-- Long listing format (-l)
+- Long listing format (`-l`)
 
-- Show hidden files (-a)
+- Show hidden files (`-a`)
 
-- Recursive directory listing (-R)
+- Recursive directory listing (`-R`)
 
-- List directories themselves, not their contents (-d)
+- List directories themselves, not their contents (`-d`)
 
-- One entry per line (-1)
+- One entry per line (`-1`)
+
+- Reverse sorting order (`-r`)
+
+- Sort by modification time, newest first (`-t`)
 
 - Column output with terminal-width awareness
 
-- Correct handling of . and ..
+- Correct handling of `.` and `..`
 
-- Symlink display (name -> target)
+- Accurate name sorting matching `ls` behavior
 
-- Directory totals (total N)
+- Symlink display (`name -> target`)
+
+- Directory block totals (`total N`)
 
 - Realistic timestamp formatting (6-month rule)
 
 - POSIX-style error handling
 
-- Help output (-h, --help)
+- Buffered output for improved performance
+
+- UID/GID caching for efficient long listings
+
+- Help output (`--help`)
+
 
 ### Usage
 ```
@@ -41,12 +52,22 @@ If no files are provided, the current directory (.) is listed.
 
 ### Options
 Flag	Description
--l	Use a long listing format
--a	Do not ignore entries starting with .
--R	List subdirectories recursively
--d	List directories themselves, not their contents
--1	List one file per line
--h, --help	Display help and exit
+
+-l	    Use a long listing format
+
+-a	    Do not ignore entries starting with .
+
+-R	    List subdirectories recursively
+
+-d	    List directories themselves, not their contents
+
+-r      Reverse order while sorting
+
+-t      Sort by modification time, newest first
+
+-1	    List one file per line
+
+--help	Display help and exit
 
 ### Behavior Notes
 

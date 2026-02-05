@@ -37,6 +37,10 @@ func parseArgs(args []string) (models.Flags, []string, error) {
 						flags.Dir = true
 					case '1':
 						flags.One = true
+					case 'r':
+						flags.Reverse = true
+					case 't':
+						flags.Time = true
 
 					default:
 						return flags, nil, fmt.Errorf("invalid option -- %c", c)

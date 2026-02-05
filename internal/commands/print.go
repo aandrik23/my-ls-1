@@ -7,7 +7,7 @@ import (
 
 func PrintShort(entries []models.Entry) {
 	for _, e := range entries {
-		fmt.Println(e.Name)
+		fmt.Fprintln(out, e.Name)
 	}
 }
 
@@ -16,11 +16,11 @@ func PrintEntry(entry models.Entry, flags models.Flags) {
 		PrintLong([]models.Entry{entry})
 		return
 	}
-	fmt.Println(entry.Name)
+	fmt.Fprintln(out, entry.Name)
 }
 
 func PrintDirHeader(name string) {
-	fmt.Printf("%s:\n", name)
+	fmt.Fprintf(out, "%s:\n", name)
 }
 
 const termWidth = 80
@@ -48,7 +48,7 @@ func PrintColumns(entries []models.Entry) {
 	}
 	if cols == 1 {
 		for _, e := range entries {
-			fmt.Println(e.Name)
+			fmt.Fprintln(out, e.Name)
 		}
 		return
 	}
@@ -66,11 +66,11 @@ func PrintColumns(entries []models.Entry) {
 
 			name := entries[i].Name
 			if c == cols-1 || i+rows >= len(entries) {
-				fmt.Print(name)
+				fmt.Fprint(out, name)
 			} else {
-				fmt.Printf("%-*s", colWidth, name)
+				fmt.Fprintf(out, "%-*s", colWidth, name)
 			}
 		}
-		fmt.Println()
+		fmt.Fprintln(out)
 	}
 }

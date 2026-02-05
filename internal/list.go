@@ -5,14 +5,7 @@ import (
 	"my-ls/internal/commands"
 	"my-ls/internal/models"
 	"my-ls/logger"
-	"sort"
 )
-
-func sortEntries(entries []models.Entry) {
-	sort.Slice(entries, func(i, j int) bool {
-		return entries[i].Name < entries[j].Name
-	})
-}
 
 func listFile(entry models.Entry, flags models.Flags) error {
 
@@ -34,7 +27,7 @@ func listDirectory(path, display string, flags models.Flags) error {
 		return err
 	}
 
-	sortEntries(entries)
+	sortEntries(entries, flags)
 
 	// print this directory
 	if flags.Long {

@@ -4,6 +4,7 @@ import (
 	"my-ls/internal/models"
 	"os"
 	"path/filepath"
+	"syscall"
 )
 
 var entries []models.Entry
@@ -53,10 +54,16 @@ func collectDirectoryEntries(path string, flags models.Flags) ([]models.Entry, e
 			continue
 		}
 
+		var st *syscall.Stat_t
+		if s, ok := info.Sys().(*syscall.Stat_t); ok {
+			st = s
+		}
+
 		entries = append(entries, models.Entry{
 			Name: name,
 			Path: fullPath,
 			Info: info,
+			Stat: st,
 		})
 	}
 

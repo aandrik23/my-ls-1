@@ -7,16 +7,19 @@ import (
 	"syscall"
 )
 
+var userCache = make(map[uint32]string)
+var groupCache = make(map[uint32]string)
+
 func PrintLong(entries []models.Entry) {
 	if len(entries) > 1 {
-		fmt.Printf("total %d\n", totalBlocks(entries))
+		fmt.Fprintf(out, "total %d\n", totalBlocks(entries))
 	}
 	var maxLinks, maxSize int
 	var maxUser, maxGroup int
 
 	for _, e := range entries {
-		st := stat(e)
-		if st == nil {
+		st, ok := statOK(e)
+		if !ok {
 			continue
 		}
 
@@ -41,12 +44,12 @@ func PrintLong(entries []models.Entry) {
 	}
 
 	for _, e := range entries {
-		st := stat(e)
-		if st == nil {
+		st, ok := statOK(e)
+		if !ok {
 			continue
 		}
 
-		fmt.Printf(
+		fmt.Fprintf(out,
 			"%s %*d %-*s %-*s %*d %s %s\n",
 			e.Info.Mode().String(),
 			maxLinks, st.Nlink,
@@ -60,21 +63,19 @@ func PrintLong(entries []models.Entry) {
 
 }
 
-func stat(e models.Entry) *syscall.Stat_t {
-	if st, ok := e.Info.Sys().(*syscall.Stat_t); ok {
-		return st
-	}
-	return nil
+func statOK(e models.Entry) (*syscall.Stat_t, bool) {
+	return e.Stat, e.Stat != nil
 }
 
 func totalBlocks(entries []models.Entry) int64 {
 	var total int64
 
 	for _, e := range entries {
-		st := stat(e)
-		if st == nil {
+		st, ok := statOK(e)
+		if !ok {
 			continue
 		}
+
 		total += st.Blocks
 	}
 

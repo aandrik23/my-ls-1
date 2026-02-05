@@ -1,9 +1,9 @@
 package internal
 
 import (
-	"fmt"
 	"my-ls/internal/commands"
 	"my-ls/internal/models"
+	"my-ls/internal/writer"
 	"my-ls/logger"
 )
 
@@ -15,6 +15,8 @@ func Run(paths []string, flags models.Flags) {
 				logger.PrintError(logger.ACCESS, p, err)
 			}
 		}
+		writer.Flush()
+		return
 	}
 
 	files, dirs, errs := splitOperands(paths)
@@ -33,11 +35,8 @@ func Run(paths []string, flags models.Flags) {
 	// Then list directories
 	needHeader := flags.Recursive || len(dirs) > 1 || len(files) > 0
 
-	for i, d := range dirs {
+	for _, d := range dirs {
 		if needHeader {
-			if i > 0 {
-				fmt.Println()
-			}
 			commands.PrintDirHeader(d.Name)
 		}
 
@@ -45,5 +44,5 @@ func Run(paths []string, flags models.Flags) {
 			logger.PrintError(logger.ACCESS, d.Name, err)
 		}
 	}
-	defer commands.Flush()
+	defer writer.Flush()
 }

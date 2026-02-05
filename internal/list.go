@@ -1,9 +1,9 @@
 package internal
 
 import (
-	"fmt"
 	"my-ls/internal/commands"
 	"my-ls/internal/models"
+	"my-ls/internal/writer"
 	"my-ls/logger"
 )
 
@@ -46,16 +46,11 @@ func listDirectory(path, display string, flags models.Flags) error {
 	}
 
 	for _, e := range entries {
-		if !isRealDir(e) {
+		if !isRealDir(e) || e.Name == "." || e.Name == ".." {
 			continue
 		}
 
-		// skip "." and ".."
-		if e.Name == "." || e.Name == ".." {
-			continue
-		}
-
-		fmt.Println()
+		writer.PrintBlankLine()
 		nextDisplay := display + "/" + e.Name
 		commands.PrintDirHeader(nextDisplay)
 

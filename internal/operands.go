@@ -3,6 +3,7 @@ package internal
 import (
 	"my-ls/internal/models"
 	"os"
+	"syscall"
 )
 
 type AccessError struct {
@@ -18,10 +19,15 @@ func splitOperands(paths []string) (files []models.Entry, dirs []models.Entry, e
 			continue
 		}
 
+		var st *syscall.Stat_t
+		if s, ok := info.Sys().(*syscall.Stat_t); ok {
+			st = s
+		}
 		e := models.Entry{
 			Name: path,
 			Path: path,
 			Info: info,
+			Stat: st,
 		}
 
 		// -d is handled outside (Dispatch/Execute logic), so here we classify raw operands.

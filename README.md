@@ -104,7 +104,7 @@ This separation keeps logic, formatting, and error handling independent and easy
 This is not a minimal clone or a wrapper around system calls.
 The goal is to understand and reimplement how ls actually works:
 
-No shelling out to ls
+No shelling writer.Out to ls
 
 No shortcuts around filesystem semantics
 

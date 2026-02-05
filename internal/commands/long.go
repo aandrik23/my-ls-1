@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"my-ls/internal/models"
+	"my-ls/internal/writer"
 	"os"
 	"syscall"
 )
@@ -12,7 +13,7 @@ var groupCache = make(map[uint32]string)
 
 func PrintLong(entries []models.Entry) {
 	if len(entries) > 1 {
-		fmt.Fprintf(out, "total %d\n", totalBlocks(entries))
+		fmt.Fprintf(writer.Out, "total %d\n", totalBlocks(entries))
 	}
 	var maxLinks, maxSize int
 	var maxUser, maxGroup int
@@ -49,7 +50,7 @@ func PrintLong(entries []models.Entry) {
 			continue
 		}
 
-		fmt.Fprintf(out,
+		fmt.Fprintf(writer.Out,
 			"%s %*d %-*s %-*s %*d %s %s\n",
 			e.Info.Mode().String(),
 			maxLinks, st.Nlink,

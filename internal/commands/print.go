@@ -3,12 +3,13 @@ package commands
 import (
 	"fmt"
 	"my-ls/internal/models"
+	"my-ls/internal/writer"
 	"unicode/utf8"
 )
 
 func PrintShort(entries []models.Entry) {
 	for _, e := range entries {
-		fmt.Fprintln(out, formatColoredName(e))
+		fmt.Fprintln(writer.Out, formatColoredName(e))
 	}
 }
 
@@ -17,11 +18,11 @@ func PrintEntry(entry models.Entry, flags models.Flags) {
 		PrintLong([]models.Entry{entry})
 		return
 	}
-	fmt.Fprintln(out, formatColoredName(entry))
+	fmt.Fprintln(writer.Out, formatColoredName(entry))
 }
 
 func PrintDirHeader(name string) {
-	fmt.Fprintf(out, "%s:\n", name)
+	fmt.Fprintf(writer.Out, "%s:\n", name)
 }
 
 func PrintColumns(entries []models.Entry) {
@@ -46,7 +47,7 @@ func PrintColumns(entries []models.Entry) {
 	// If even one column doesn't fit, fall back to one-per-line
 	if maxLen > termWidth {
 		for _, e := range entries {
-			fmt.Fprintln(out, formatColoredName(e))
+			fmt.Fprintln(writer.Out, formatColoredName(e))
 		}
 		return
 	}
@@ -63,11 +64,11 @@ func PrintColumns(entries []models.Entry) {
 	if totalWidth <= termWidth {
 		for i, e := range entries {
 			if i > 0 {
-				fmt.Fprint(out, "  ")
+				fmt.Fprint(writer.Out, "  ")
 			}
-			fmt.Fprint(out, formatColoredName(e))
+			fmt.Fprint(writer.Out, formatColoredName(e))
 		}
-		fmt.Fprintln(out)
+		fmt.Fprintln(writer.Out)
 		return
 	}
 
@@ -89,11 +90,11 @@ func PrintColumns(entries []models.Entry) {
 			}
 
 			if c == cols-1 || i+rows >= len(entries) {
-				fmt.Fprint(out, formatColoredName(entries[i]))
+				fmt.Fprint(writer.Out, formatColoredName(entries[i]))
 			} else {
-				fmt.Fprintf(out, "%-*s  ", maxLen, formatColoredName(entries[i]))
+				fmt.Fprintf(writer.Out, "%-*s  ", maxLen, formatColoredName(entries[i]))
 			}
 		}
-		fmt.Fprintln(out)
+		fmt.Fprintln(writer.Out)
 	}
 }

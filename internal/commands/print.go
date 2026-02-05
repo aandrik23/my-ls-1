@@ -8,7 +8,7 @@ import (
 
 func PrintShort(entries []models.Entry) {
 	for _, e := range entries {
-		fmt.Fprintln(out, e.Name)
+		fmt.Fprintln(out, formatColoredName(e))
 	}
 }
 
@@ -17,7 +17,7 @@ func PrintEntry(entry models.Entry, flags models.Flags) {
 		PrintLong([]models.Entry{entry})
 		return
 	}
-	fmt.Fprintln(out, entry.Name)
+	fmt.Fprintln(out, formatColoredName(entry))
 }
 
 func PrintDirHeader(name string) {
@@ -29,31 +29,34 @@ func PrintColumns(entries []models.Entry) {
 		return
 	}
 
-	sep := 2 // ls uses 2 spaces between columns
+	const colSep = 2 // ls uses 2 spaces between columns
 	termWidth := terminalWidth()
 
-	// 1) max display width (runes, not bytes)
+	// Precompute display widths
+	widths := make([]int, len(entries))
 	maxLen := 0
-	for _, e := range entries {
-		if l := utf8.RuneCountInString(e.Name); l > maxLen {
-			maxLen = l
+	for i, e := range entries {
+		w := utf8.RuneCountInString(e.Name)
+		widths[i] = w
+		if w > maxLen {
+			maxLen = w
 		}
 	}
 
 	// If even one column doesn't fit, fall back to one-per-line
 	if maxLen > termWidth {
 		for _, e := range entries {
-			fmt.Fprintln(out, e.Name)
+			fmt.Fprintln(out, formatColoredName(e))
 		}
 		return
 	}
 
 	// If everything fits on one row, print one row (ls behavior)
 	totalWidth := 0
-	for i, e := range entries {
-		totalWidth += utf8.RuneCountInString(e.Name)
-		if i != len(entries)-1 {
-			totalWidth += sep
+	for i, w := range widths {
+		totalWidth += w
+		if i != len(widths)-1 {
+			totalWidth += colSep
 		}
 	}
 
@@ -62,22 +65,22 @@ func PrintColumns(entries []models.Entry) {
 			if i > 0 {
 				fmt.Fprint(out, "  ")
 			}
-			fmt.Fprint(out, e.Name)
+			fmt.Fprint(out, formatColoredName(e))
 		}
 		fmt.Fprintln(out)
 		return
 	}
 
-	// 2) how many columns fit
-	cols := (termWidth + sep) / (maxLen + sep)
+	// How many columns fit
+	cols := (termWidth + colSep) / (maxLen + colSep)
 	if cols < 1 {
 		cols = 1
 	}
 
-	// 3) how many rows
+	// How many rows
 	rows := (len(entries) + cols - 1) / cols
 
-	// 4) print column-major
+	// Print column-major (ls style)
 	for r := 0; r < rows; r++ {
 		for c := 0; c < cols; c++ {
 			i := c*rows + r
@@ -85,11 +88,10 @@ func PrintColumns(entries []models.Entry) {
 				continue
 			}
 
-			name := entries[i].Name
 			if c == cols-1 || i+rows >= len(entries) {
-				fmt.Fprint(out, name)
+				fmt.Fprint(out, formatColoredName(entries[i]))
 			} else {
-				fmt.Fprintf(out, "%-*s  ", maxLen, name)
+				fmt.Fprintf(out, "%-*s  ", maxLen, formatColoredName(entries[i]))
 			}
 		}
 		fmt.Fprintln(out)

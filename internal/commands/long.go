@@ -83,10 +83,16 @@ func totalBlocks(entries []models.Entry) int64 {
 }
 
 func formatName(e models.Entry) string {
+	name := e.Name
+
+	if enableColor && e.Info.IsDir() {
+		name = colorBlue + name + colorReset
+	}
+
 	if e.Info.Mode()&os.ModeSymlink != 0 {
 		if target, err := os.Readlink(e.Path); err == nil {
-			return e.Name + " -> " + target
+			return name + " -> " + target
 		}
 	}
-	return e.Name
+	return name
 }
